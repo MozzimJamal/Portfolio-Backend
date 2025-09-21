@@ -10,7 +10,10 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://your-frontend-url.netlify.app",
+  credentials: true // अगर cookies use हो रही हैं
+}));
 app.use(express.json());
 app.use(cookieParser());
 
