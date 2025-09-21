@@ -11,7 +11,7 @@ connectDB();
 
 const app = express();
 app.use(cors({
-  origin: "https://your-frontend-url.netlify.app",
+  origin: "https://portfolio-backend-nx4a.onrender.com",
   credentials: true // अगर cookies use हो रही हैं
 }));
 app.use(express.json());
