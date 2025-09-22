@@ -16,14 +16,23 @@ const allowedOrigins = [process.env.FRONTEND_URI, process.env.ADMIN_URI];
 
 app.use(cors({
   origin: function(origin, callback){
-    if(!origin) return callback(null, true); // allow non-browser requests
+    // allow requests with no origin (like Postman or server-to-server)
+    if(!origin) return callback(null, true);
+
     if(allowedOrigins.includes(origin)){
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("CORS not allowed"));
     }
   },
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"], // preflight methods
   credentials: true,
+}));
+
+// Preflight OPTIONS request handle
+app.options("*", cors({
+  origin: allowedOrigins,
+  credentials: true
 }));
 
 app.use(express.json());
