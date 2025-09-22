@@ -16,15 +16,17 @@ const allowedOrigins = [
   process.env.ADMIN_URI
 ];
 
-// ✅ Dynamic origin check
+// Render-safe CORS
 app.use(cors({
-  origin: function(origin, callback) {
-    // allow non-browser requests
+  origin: (origin, callback) => {
+    // allow Postman, server-to-server requests
     if (!origin) return callback(null, true);
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      // Instead of throwing Error, just reject origin silently
+      callback(null, false);
     }
   },
   credentials: true,
