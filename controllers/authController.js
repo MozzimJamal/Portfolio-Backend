@@ -32,8 +32,13 @@ exports.login = async (req, res) => {
     });
 
     // Optionally, store token in a cookie
-    res.cookie("token", token, { httpOnly: true });
-    res.json({ message: "Login successful", token });
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // HTTPS me true
+  sameSite: "None", // cross-site requests ke liye
+});
+res.json({ message: "Login successful", token });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

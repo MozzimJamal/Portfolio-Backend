@@ -17,18 +17,18 @@ const allowedOrigins = [
   process.env.ADMIN_URI
 ];
 
-// CORS setup
+// ✅ CORS
 app.use(cors({
-  origin: function(origin, callback) {
-    if(!origin) return callback(null, true); // Postman or server-to-server
-    if(allowedOrigins.includes(origin)){
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // server-to-server or Postman
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
+  credentials: true, // <-- important for cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
 
 // Body parser + cookies
@@ -41,7 +41,7 @@ app.use("/api/auth", authRoutes);
 app.use("/uploads", express.static("uploads"));
 
 // Test route
-app.get("/", (req,res)=> res.send("🚀 Backend is running!"));
+app.get("/", (req, res) => res.send("🚀 Backend is running!"));
 
 // Start server
 const PORT = process.env.PORT || 5000;
