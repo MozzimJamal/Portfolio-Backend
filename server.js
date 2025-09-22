@@ -11,10 +11,19 @@ connectDB();
 
 const app = express();
 
-// ✅ Allow frontend & admin panel
+// Allowed origins
+const allowedOrigins = [process.env.FRONTEND_URI, process.env.ADMIN_URI];
+
 app.use(cors({
-  origin: [process.env.FRONTEND_URI, process.env.ADMIN_URI],
-  credentials: true
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // allow non-browser requests
+    if(allowedOrigins.includes(origin)){
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
 
 app.use(express.json());
