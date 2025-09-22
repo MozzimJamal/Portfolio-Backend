@@ -16,23 +16,25 @@ const allowedOrigins = [
   process.env.ADMIN_URI
 ];
 
-// Render-safe CORS
+// ✅ Safe CORS
 app.use(cors({
   origin: (origin, callback) => {
-    // allow Postman, server-to-server requests
+    // allow Postman or server-to-server requests with no origin
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      // Instead of throwing Error, just reject origin silently
+      // Block browser requests from other origins
       callback(null, false);
     }
   },
-  credentials: true,
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
+// Express JSON + cookies
 app.use(express.json());
 app.use(cookieParser());
 
