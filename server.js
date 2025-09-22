@@ -10,10 +10,13 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+// ✅ Allow frontend & admin panel
 app.use(cors({
-  origin: "https://portfolio-backend-nx4a.onrender.com",
-  credentials: true // अगर cookies use हो रही हैं
+  origin: [process.env.FRONTEND_URI, process.env.ADMIN_URI],
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
