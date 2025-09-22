@@ -11,28 +11,24 @@ connectDB();
 
 const app = express();
 
-// Allowed origins
-const allowedOrigins = [process.env.FRONTEND_URI, process.env.ADMIN_URI];
+const allowedOrigins = [
+  process.env.FRONTEND_URI,
+  process.env.ADMIN_URI
+];
 
+// ✅ Dynamic origin check
 app.use(cors({
-  origin: function(origin, callback){
-    // allow requests with no origin (like Postman or server-to-server)
-    if(!origin) return callback(null, true);
-
-    if(allowedOrigins.includes(origin)){
+  origin: function(origin, callback) {
+    // allow non-browser requests
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS not allowed"));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"], // preflight methods
   credentials: true,
-}));
-
-// Preflight OPTIONS request handle
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
 }));
 
 app.use(express.json());
@@ -43,5 +39,6 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/uploads", express.static("uploads"));
 
+// PORT
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
