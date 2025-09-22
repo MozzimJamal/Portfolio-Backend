@@ -11,11 +11,27 @@ connectDB();
 
 const app = express();
 
-// ✅ Allow frontend & admin panel
+const allowedOrigins = [
+  process.env.FRONTEND_URI,
+  process.env.ADMIN_URI
+];
+
+// Proper CORS setup
 app.use(cors({
-  origin: [process.env.FRONTEND_URI, process.env.ADMIN_URI],
-  credentials: true
+  origin: function(origin, callback) {
+    if(!origin) return callback(null, true); // Postman / server-to-server requests
+    if(allowedOrigins.indexOf(origin) !== -1){
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
 }));
+
+// Optional: preflight fallback
+app.options("*", cors());
 
 app.use(express.json());
 app.use(cookieParser());
