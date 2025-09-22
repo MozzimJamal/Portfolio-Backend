@@ -10,28 +10,24 @@ dotenv.config();
 connectDB();
 
 const app = express();
+import cors from "cors";
 
 const allowedOrigins = [
   process.env.FRONTEND_URI,
   process.env.ADMIN_URI
 ];
 
-// ✅ Safe CORS
 app.use(cors({
-  origin: (origin, callback) => {
-    // allow Postman or server-to-server requests with no origin
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
+  origin: function(origin, callback) {
+    if(!origin) return callback(null, true); // Postman/SSR requests allow
+    if(allowedOrigins.indexOf(origin) !== -1){
       callback(null, true);
     } else {
-      // Block browser requests from other origins
-      callback(null, false);
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
 }));
 
 // Express JSON + cookies
